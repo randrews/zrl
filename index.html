@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <script type="application/javascript" src="point.js"></script>
+        <script type="application/javascript" src="map.js"></script>
+        <script type="application/javascript" src="generate.js"></script>
+        <script type="application/javascript" src="pubsub.js"></script>
+        <script type="application/javascript" src="display.js"></script>
+        <script type="application/javascript" src="input.js"></script>
+        <script type="application/javascript" src="game.js"></script>
+        <script type="application/javascript" src="main.js"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="panel panel-default" style="position: relative; width:850px; left: 50%; margin-left:-425px;">
+            <div class="panel-heading">
+                Game
+            </div>
+            <div class="panel-body">
+                <div style="position:relative; width:824px; left: 50%; margin-left:-412px;">
+                    <canvas style="background-color:black"
+                            height="432"
+                            width="624"
+                            id="map">
+                    </canvas>
+
+                    <div style="position:absolute; right:0; top:0;">
+                        <div class="panel panel-default"
+                             style="min-height:160px; width:200px; margin-bottom:0">
+                        </div>
+
+                        <div class="panel panel-default"
+                             style="min-height:272px;">
+                        </div>
+                    </div>
+                </div>                    
+            </div>
+        </div>
+    </body>
+</html>
