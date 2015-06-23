@@ -5,7 +5,8 @@ var Images = {};
 function loadImages(){
     var to_load = [
         ["terrain", "img/oryx_16bit_fantasy_world_trans.png"],
-        ["arrows", "img/arrows.png"]
+        ["arrows", "img/arrows.png"],
+        ["creatures", "img/oryx_16bit_fantasy_creatures_trans.png"]
     ];
     var loaded = 0;
     var prom = new Promise();

@@ -18,8 +18,14 @@ Display.prototype.start = function(){
     this.timer = setInterval(function(){
         var room = that.game.currentRoom();
         room.animationFrame++;
-        that.drawRoom(room, zero);
-    }, 100);
+        that.drawRoom(room, zero, that.game.player);
+    }, 50);
+};
+
+Display.prototype.draw = function(){
+    this.drawRoom(this.game.currentRoom(),
+                  new Point(0,0),
+                  this.game.player);
 };
 
 Display.prototype.stop = function(){
@@ -49,7 +55,7 @@ Display.prototype.animate = function(room1, room2, dir){
         if(dir=='w')offset.x++;
 
         that.drawRoom(room1, offset);
-        that.drawRoom(room2, room2_offset.add(offset));
+        that.drawRoom(room2, room2_offset.add(offset), that.game.player);
 
         if(++stepsTaken == steps){
             clearInterval(timer);
@@ -61,11 +67,12 @@ Display.prototype.animate = function(room1, room2, dir){
     return prom;
 };
 
-Display.prototype.drawRoom = function(room, offset){
+Display.prototype.drawRoom = function(room, offset, player){
     if(this.buffer) var ctx = this.buffer.getContext("2d");
     else var ctx = this.canvas.getContext("2d");
 
-    room.each(function(pt, col){
+    room.each(function(pt, cell){
+        var col = cell.draw;
         var dest = pt.add(offset);
         if(!this.inside(dest)) return;
 
@@ -82,7 +89,7 @@ Display.prototype.drawRoom = function(room, offset){
     var midy = Math.floor(room.height/2);
     var maxx = room.width-1;
     var maxy = room.height-1;
-    var frame = room.animationFrame % 8;
+    var frame = Math.floor(room.animationFrame/2) % 8;
     if(frame > 4) frame = 8-frame;
 
     if(room.exits.n)
@@ -112,6 +119,16 @@ Display.prototype.drawRoom = function(room, offset){
                        48, 48,
                        0 + offset.x*48, midy * 48 + offset.y*48,
                        48, 48 );
+
+    // Draw player
+    if(player){
+        var playerFrame = (Math.floor(room.animationFrame / 10)) % 2;
+        ctx.drawImage( Images.creatures,
+                       3 * 48, (3 + playerFrame) * 48,
+                       48, 48,
+                       (player.x +offset.x) * 48, (player.y +offset.y) * 48,
+                       48, 48);
+    }
 
     if(this.buffer){
         var realctx = this.canvas.getContext("2d");

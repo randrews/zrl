@@ -9,6 +9,9 @@ function Game(){
         this.at(pt, makemap(exits));
     });
 
+    this.player = new Point( (this.currentRoom().width-1)/2,
+                             (this.currentRoom().height-1)/2 );
+
     this.animating = false;
 }
 
@@ -22,6 +25,32 @@ Game.prototype.start = function(){
     this.display.start();
 };
 
+Game.prototype.movePlayer = function(pt){
+    this.player = pt;
+    var dest = this.currentRoom().at(pt);
+    if(dest.door)
+        this.moveRoom(dest.door);
+};
+
+Game.prototype.movePath = function(path){
+    var that = this;
+    var current_idx = 0;
+    var prom = new Promise();
+    this.animating = true;
+
+    var timer = setInterval( function(){
+        that.movePlayer(path[current_idx]);
+
+        if(++current_idx == path.length){
+            clearInterval(timer);
+            that.animating = false;
+            prom.finish();
+        }
+    }, 50 );
+
+    return prom;
+};
+
 Game.prototype.moveRoom = function(dir){
     var that = this;
     this.animating = true;
@@ -33,6 +62,20 @@ Game.prototype.moveRoom = function(dir){
     if(dir == 'e' && room.exits.e) this.room.x++;
     if(dir == 'w' && room.exits.w) this.room.x--;
     var new_room = this.currentRoom();
+
+    if(room == new_room) return;
+
+    var midx = Math.floor(room.width/2);
+    var midy = Math.floor(room.height/2);
+    var maxx = room.width-1;
+    var maxy = room.height-1;
+
+    switch(dir){
+    case 'n': this.player = new Point(midx, maxy); break;
+    case 's': this.player = new Point(midx, 0); break;
+    case 'e': this.player = new Point(0, midy); break;
+    case 'w': this.player = new Point(maxx, midy); break;
+    };
 
     this.display.animate(room, new_room, dir).then(function(){
         that.animating = false;

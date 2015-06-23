@@ -73,20 +73,32 @@ function makemap(exits) {
         }
     }
 
-    // Smoothify walls
-    map.at(new Point(0,0), 17);
-    map.at(new Point(map.width-1,0), 18);
-    map.at(new Point(0,map.height-1), 19);
-    map.at(new Point(map.width-1, map.height-1), 20);
+    // Various members
+    map.animationFrame = 0;
+    map.biome = random(1, 15);
+
+    smoothifyWalls(map, hv);
+    insertDoors(map, exits);
+    randomizeFloors(map);
+
+
+    return map;
+}
+
+function smoothifyWalls(map, hv){
+    map.at(new Point(0,0), {type:'wall', draw:17});
+    map.at(new Point(map.width-1,0), {type:'wall', draw:18});
+    map.at(new Point(0,map.height-1), {type:'wall', draw:19});
+    map.at(new Point(map.width-1, map.height-1), {type:'wall', draw:20});
 
     for(var x=1; x<=map.width-2; x++) {
-        map.at(new Point(x, 0), 12);
-        map.at(new Point(x, map.height-1), 12);
+        map.at(new Point(x, 0), {type:'wall', draw:12});
+        map.at(new Point(x, map.height-1), {type:'wall', draw:12});
     }
 
     for(var y=1; y<=map.height-2; y++) {
-        map.at(new Point(0, y), 15);
-        map.at(new Point(map.width-1,y), 15);
+        map.at(new Point(0, y), {type:'wall', draw:15});
+        map.at(new Point(map.width-1,y), {type:'wall', draw:15});
     }
 
     var blocks = map.find_value("#");
@@ -97,72 +109,70 @@ function makemap(exits) {
             var lt = c.x>1 && map.at(new Point(c.x-1, c.y)) != '.';
             var rt = c.x<map.width-1 && map.at(new Point(c.x+1, c.y)) != '.';
 
-            if(!lt && !rt) map.at(c, 10);
-            if(!lt && rt) map.at(c, 11);
-            if(lt && rt) map.at(c, 12);
-            if(lt && !rt) map.at(c, 13);
+            if(!lt && !rt) map.at(c, {type:'wall', draw:10});
+            if(!lt && rt) map.at(c, {type:'wall', draw:11});
+            if(lt && rt) map.at(c, {type:'wall', draw:12});
+            if(lt && !rt) map.at(c, {type:'wall', draw:13});
         } else {
             var up = c.y>1 && map.at(new Point(c.x, c.y-1)) != '.';
             var dn = c.y<map.height-2 && map.at(new Point(c.x, c.y+1)) != '.';
 
-            if(!up && !dn) map.at(c, 10);
-            if(!up && dn) map.at(c, 14);
-            if(up && dn) map.at(c, 15);
-            if(up && !dn) map.at(c, 16);
+            if(!up && !dn) map.at(c, {type:'wall', draw:10});
+            if(!up && dn) map.at(c, {type:'wall', draw:14});
+            if(up && dn) map.at(c, {type:'wall', draw:15});
+            if(up && !dn) map.at(c, {type:'wall', draw:16});
         }
     }
+}
 
-    // Insert doors
+function insertDoors(map, exits){
     map.exits = exits;
     var midx = Math.floor(map.width/2);
     var midy = Math.floor(map.height/2);
     var maxx = map.width-1;
     var maxy = map.height-1;
     if(exits.n){
-        map.at(new Point(midx, 0), '.');
-        map.at(new Point(midx-1, 0), 13);
-        map.at(new Point(midx+1, 0), 11);
+        map.at(new Point(midx, 0), {type:'floor', door:'n', draw: floorForBiome(map.biome)});
+        map.at(new Point(midx-1, 0), {type:'wall', draw:13});
+        map.at(new Point(midx+1, 0), {type:'wall', draw:11});
     }
 
     if(exits.s){
-        map.at(new Point(midx, maxy), '.');
-        map.at(new Point(midx-1, maxy), 13);
-        map.at(new Point(midx+1, maxy), 11);
+        map.at(new Point(midx, maxy), {type:'floor', door:'s', draw: floorForBiome(map.biome)});
+        map.at(new Point(midx-1, maxy), {type:'wall', draw:13});
+        map.at(new Point(midx+1, maxy), {type:'wall', draw:11});
     }
 
     if(exits.e){
-        map.at(new Point(maxx, midy), '.');
-        map.at(new Point(maxx, midy-1), 16);
-        map.at(new Point(maxx, midy+1), 14);
+        map.at(new Point(maxx, midy), {type:'floor', door:'e', draw: floorForBiome(map.biome)});
+        map.at(new Point(maxx, midy-1), {type:'wall', draw:16});
+        map.at(new Point(maxx, midy+1), {type:'wall', draw:14});
     }
 
     if(exits.w){
-        map.at(new Point(0, midy), '.');
-        map.at(new Point(0, midy-1), 16);
-        map.at(new Point(0, midy+1), 14);
+        map.at(new Point(0, midy), {type:'floor', door:'w', draw: floorForBiome(map.biome)});
+        map.at(new Point(0, midy-1), {type:'wall', draw:16});
+        map.at(new Point(0, midy+1), {type:'wall', draw:14});
     }
+}
 
-    // Choose biome
-    map.biome = random(1, 15);
-
-    // Randomize floors
+function randomizeFloors(map){
     var floor = map.find_value(".");
     for(var i=0; i<floor.length; i++){
         var c = floor[i];
-        if(map.biome == 2) map.at(c, 7);
-        else if(map.biome == 5) map.at(c, 4);
-        else if(map.biome == 6) map.at(c, 6);
-        else if(map.biome == 10) map.at(c, (random(9)==1 ? 5 : 4));
-        else if(map.biome == 12) map.at(c, 4);
-        else if(map.biome == 13) map.at(c, (random(9)==1 ? 5 : 4));
-        else if(map.biome == 15) map.at(c, (random(9)==1 ? 7 : 4));
-        else map.at(c, (random(9)==1 ? 6 : 4));
+        map.at(c, {type:'floor', draw: floorForBiome(map.biome)});
     }
+}
 
-    // Various members
-    map.animationFrame = 0;
-
-    return map;
+function floorForBiome(biome){
+    if(biome == 2) return 7;
+    else if(biome == 5) return 4;
+    else if(biome == 6) return 6;
+    else if(biome == 10) return (random(9)==1 ? 5 : 4);
+    else if(biome == 12) return 4;
+    else if(biome == 13) return (random(9)==1 ? 5 : 4);
+    else if(biome == 15) return (random(9)==1 ? 7 : 4);
+    else return (random(9)==1 ? 6 : 4);
 }
 
 function printmap(map){

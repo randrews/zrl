@@ -122,6 +122,61 @@ Map.prototype.neighbors = function(pt, fn, diag){
 
 //////////////////////////////////////////////////
 
+Map.prototype.path = function(start, goal, passable, diag){
+    var that = this;
+    if(!passable) passable = function(){ return true; }
+    var p2n = function(pt){ return pt.x + pt.y * that.width; }
+    var n2p = function(n){ return new Point(n % that.width,
+                                            Math.floor(n / that.width)); }
+
+    var open = [p2n(start)];
+    var closed = {};
+    var cost = {}; cost[p2n(start)] = 0;
+    var parents = {};
+
+    var lowest = function(){
+        var min = 0;
+        for(var n=1; n<open.length; n++)
+            if(cost[open[min]] > cost[open[n]])
+                min = n;
+
+        return min;
+    }
+
+    while(open.length > 0){
+        var current_idx = lowest();
+        var current_node = open[current_idx];
+        var current_cost = cost[current_node];
+
+        if(current_node == p2n(goal)){
+            var p = [goal];
+            var current = parents[p2n(goal)];
+            while(current && current != p2n(start)){
+                p.unshift(n2p(current));
+                current = parents[current];
+            }
+            return p;
+        } else {
+            closed[current_node] = true;
+            open.splice(current_idx, 1);
+            var neighbors = this.neighbors(n2p(current_node), passable, diag);
+
+            for(var n=0; n<neighbors.length; n++){
+                var neighbor = p2n(neighbors[n]);
+                if(!cost[neighbor] && !closed[neighbor]){
+                    open.push(neighbor);
+                    cost[neighbor] = current_cost + 1;
+                    parents[neighbor] = current_node;
+                }
+            }
+        }
+    }
+
+    return null; // No path!
+};
+
+//////////////////////////////////////////////////
+
 Map.test = function(){
   var assert = function(bool){
     if(!bool) throw "Assertion failed";
