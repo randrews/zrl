@@ -1,46 +1,27 @@
 "use strict";
 
-var Images = {};
-
-function loadImages(){
-    var to_load = [
-        ["terrain", "img/oryx_16bit_fantasy_world_trans.png"],
-        ["arrows", "img/arrows.png"],
-        ["creatures", "img/oryx_16bit_fantasy_creatures_trans.png"]
-    ];
-    var loaded = 0;
-    var prom = new Promise();
-
-    for(var i=0; i<to_load.length; i++){
-        var tuple = to_load[i];
-        var img = new Image();
-
-        img.addEventListener("load", function(){
-            if(++loaded == to_load.length)
-                prom.finish();
-        });
-
-        Images[tuple[0]] = img;
-        img.src = tuple[1];
-    }
-
-    return prom;
-};
-
 var G = null;
+var Log = null;
 
 $(document).ready(function(){
+    Log = new LogObj();
+
     loadImages().then(function(){
-        var canvas = document.getElementById("map");
+        var map_canvas = document.getElementById("map");
+        var inv_canvas = document.getElementById("inventory");
         var game = new Game(); G = game;
 
-        var display = new Display(canvas);
+        var display = new Display(map_canvas, true);
         game.display = display;
         display.game = game;
 
-        var input = new Input(canvas);
+        var input = new Input(map_canvas, inv_canvas);
         game.input = input;
         input.game = game;
+
+        var inventory = new Inventory(inv_canvas, true);
+        inventory.game = game;
+        game.inventory = inventory;
 
         game.start();
     });

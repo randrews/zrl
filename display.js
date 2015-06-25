@@ -85,6 +85,21 @@ Display.prototype.drawRoom = function(room, offset, player){
                        48, 48);
     });
 
+    // Draw items
+    room.items.each(function(pt, items){
+        var dest = pt.add(offset);
+        if(!this.inside(dest)) return;
+
+        for(var i=0; i<items.length; i++){
+            var tile = items[i].draw;
+            ctx.drawImage( Images.items,
+                           tile.x*32, tile.y*32,
+                           32, 32,
+                           dest.x*48+8, dest.y*48+8,
+                           32, 32 );
+        };
+    });
+
     var midx = Math.floor(room.width/2);
     var midy = Math.floor(room.height/2);
     var maxx = room.width-1;
@@ -119,6 +134,7 @@ Display.prototype.drawRoom = function(room, offset, player){
                        48, 48,
                        0 + offset.x*48, midy * 48 + offset.y*48,
                        48, 48 );
+    
 
     // Draw player
     if(player){

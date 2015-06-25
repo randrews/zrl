@@ -80,7 +80,7 @@ function makemap(exits) {
     smoothifyWalls(map, hv);
     insertDoors(map, exits);
     randomizeFloors(map);
-
+    addItems(map);
 
     return map;
 }
@@ -173,6 +173,16 @@ function floorForBiome(biome){
     else if(biome == 13) return (random(9)==1 ? 5 : 4);
     else if(biome == 15) return (random(9)==1 ? 7 : 4);
     else return (random(9)==1 ? 6 : 4);
+}
+
+function addItems(map){
+    var loc = map.random(function(_, c){
+        return c.type == 'floor' && !c.door;
+    });
+
+    map.items = new Map(map.width, map.height);
+    map.items.each(function(pt){ this.at(pt, []); });
+    map.items.at(loc).push( Object.create(HealthPotion) );
 }
 
 function printmap(map){

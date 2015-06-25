@@ -2,6 +2,8 @@
 
 function Game(){
     this.level = makemaze();
+    this.player_inventory = [];
+
     this.room = new Point(random(this.level.width-1),
                           random(this.level.height-1));
 
@@ -19,10 +21,16 @@ Game.prototype.currentRoom = function(){
     return this.level.at(this.room);
 };
 
+Game.prototype.getInventory = function(){
+    return this.player_inventory;
+};
+
 Game.prototype.start = function(){
     if(!this.display) throw "Display not set";
     if(!this.input) throw "Input not set";
+    if(!this.inventory) throw "Inventory not set";
     this.display.start();
+    this.inventory.start();
 };
 
 Game.prototype.movePlayer = function(pt){
@@ -30,6 +38,16 @@ Game.prototype.movePlayer = function(pt){
     var dest = this.currentRoom().at(pt);
     if(dest.door)
         this.moveRoom(dest.door);
+    else {
+        var items = this.currentRoom().items.at(pt);
+        if(items.length > 0) {
+            var item = items[0];
+            if(item.grabbable && item.grab()) {
+                this.player_inventory.push(item);
+                items.splice(0, 1);
+            }
+        }
+    }
 };
 
 Game.prototype.movePath = function(path){
@@ -81,4 +99,12 @@ Game.prototype.moveRoom = function(dir){
         that.animating = false;
         that.display.start();
     });
+};
+
+Game.prototype.useItem = function(index){
+    var item = this.player_inventory[index];
+    if(!item) return;
+
+    item.consume();
+    this.player_inventory.splice(index, 1);
 };

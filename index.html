@@ -11,19 +11,39 @@
         <script type="application/javascript" src="display.js"></script>
         <script type="application/javascript" src="input.js"></script>
         <script type="application/javascript" src="game.js"></script>
+        <script type="application/javascript" src="items.js"></script>
+        <script type="application/javascript" src="inventory.js"></script>
+        <script type="application/javascript" src="images.js"></script>
+        <script type="application/javascript" src="log.js"></script>
         <script type="application/javascript" src="main.js"></script>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <style type="text/css">
+         @font-face {
+             font-family: 'Munro';
+             src: url('img/Munro.ttf');
+         }
+
+         body { font-family: Munro; font-size: 20px; }
+
+         #log .line {
+             position: absolute;
+             left: 5px;
+             height: 20px;
+             width: 100%;
+         }
+        </style>
     </head>
     <body>
-        <div class="panel panel-default" style="position: relative; width:850px; left: 50%; margin-left:-425px;">
+        <div class="panel panel-default" style="position: relative; width:864px; left: 50%; margin-left:-432px;">
             <div class="panel-heading">
                 Game
             </div>
             <div class="panel-body">
-                <div style="position:relative; width:824px; left: 50%; margin-left:-412px;">
+                <div style="position:relative; width:864px; left: 50%; margin-left:-432px;">
                     <canvas style="background-color:black"
                             height="432"
                             width="624"
@@ -32,14 +52,28 @@
 
                     <div style="position:absolute; right:0; top:0;">
                         <div class="panel panel-default"
-                             style="min-height:160px; width:200px; margin-bottom:0">
+                             style="height:192px; width:240px; margin-bottom:0">
                         </div>
 
-                        <div class="panel panel-default"
-                             style="min-height:272px;">
+                        <div style="height:240px;">
+                            <canvas style="background-color:#d3bf8f"
+                                    height="240"
+                                    width="240"
+                                    id="inventory">
                         </div>
                     </div>
-                </div>                    
+
+                    <div id="log" style="position:absolute; left:0; top:432px; width:864px; height: 144px; background-image:url('img/log.png');padding:10px;">
+                        <div style="position: relative">
+                            <div id="line1" class="line" style="top:0px"></div>
+                            <div id="line2" class="line" style="top:20px"></div>
+                            <div id="line3" class="line" style="top:40px"></div>
+                            <div id="line4" class="line" style="top:60px"></div>
+                            <div id="line5" class="line" style="top:80px"></div>                            
+                            <div id="line6" class="line" style="top:100px"></div>                            
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
