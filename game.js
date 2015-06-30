@@ -15,6 +15,7 @@ function Game(){
                              (this.currentRoom().height-1)/2 );
 
     this.animating = false;
+    this.animationFrame = 0;
 }
 
 Game.prototype.currentRoom = function(){
@@ -23,14 +24,6 @@ Game.prototype.currentRoom = function(){
 
 Game.prototype.getInventory = function(){
     return this.player_inventory;
-};
-
-Game.prototype.start = function(){
-    if(!this.display) throw "Display not set";
-    if(!this.input) throw "Input not set";
-    if(!this.inventory) throw "Inventory not set";
-    this.display.start();
-    this.inventory.start();
 };
 
 Game.prototype.movePlayer = function(pt){
@@ -72,7 +65,6 @@ Game.prototype.movePath = function(path){
 Game.prototype.moveRoom = function(dir){
     var that = this;
     this.animating = true;
-    this.display.stop();
 
     var room = this.currentRoom();
     if(dir == 'n' && room.exits.n) this.room.y--;
@@ -97,7 +89,6 @@ Game.prototype.moveRoom = function(dir){
 
     this.display.animate(room, new_room, dir).then(function(){
         that.animating = false;
-        that.display.start();
     });
 };
 
@@ -107,4 +98,9 @@ Game.prototype.useItem = function(index){
 
     item.consume();
     this.player_inventory.splice(index, 1);
+};
+
+Game.prototype.draw = function(frame){
+    this.display.draw(frame);
+    this.inventory.draw(this.getInventory(), frame);
 };

@@ -1,36 +1,19 @@
 "use strict";
 
-function Display(canvas, double_buffered){
-    this.canvas = canvas;
-
-    if(double_buffered){
-        this.buffer = document.createElement("canvas");
-        this.buffer.width = this.canvas.width;
-        this.buffer.height = this.canvas.height;
-    }
+function Display(canvas, geometry){
+    this.init(canvas, geometry);
 }
 
-Display.prototype.start = function(){
-    if(!this.game) throw "Game not set";
-    var that = this;
-    var zero = new Point(0,0);
+Display.prototype = new Drawable();
 
-    this.timer = setInterval(function(){
-        var room = that.game.currentRoom();
-        room.animationFrame++;
-        that.drawRoom(room, zero, that.game.player);
-    }, 50);
-};
-
-Display.prototype.draw = function(){
-    this.drawRoom(this.game.currentRoom(),
-                  new Point(0,0),
-                  this.game.player);
-};
-
-Display.prototype.stop = function(){
-    if(this.timer) clearInterval(this.timer);
-    this.timer = null;
+Display.prototype.paint = function(ctx, frame){
+    if(this.animating)
+        this.animationCallback(ctx, frame);
+    else {
+        this.drawRoom(ctx, this.game.currentRoom(), frame,
+                      new Point(0,0),
+                      this.game.player);
+    }
 };
 
 Display.prototype.animate = function(room1, room2, dir){
@@ -54,23 +37,24 @@ Display.prototype.animate = function(room1, room2, dir){
         if(dir=='e')offset.x--;
         if(dir=='w')offset.x++;
 
-        that.drawRoom(room1, offset);
-        that.drawRoom(room2, room2_offset.add(offset), that.game.player);
-
         if(++stepsTaken == steps){
             clearInterval(timer);
+            that.animating = false;
+            that.animationCallback = null;
             prom.finish();
         }
     }, 500 / steps );
-    
+
+    this.animating = true;
+    this.animationCallback = function(ctx, frame){
+        that.drawRoom(ctx, room1, frame, offset);
+        that.drawRoom(ctx, room2, frame, room2_offset.add(offset), that.game.player);
+    };
 
     return prom;
 };
 
-Display.prototype.drawRoom = function(room, offset, player){
-    if(this.buffer) var ctx = this.buffer.getContext("2d");
-    else var ctx = this.canvas.getContext("2d");
-
+Display.prototype.drawRoom = function(ctx, room, frame, offset, player){
     room.each(function(pt, cell){
         var col = cell.draw;
         var dest = pt.add(offset);
@@ -104,33 +88,33 @@ Display.prototype.drawRoom = function(room, offset, player){
     var midy = Math.floor(room.height/2);
     var maxx = room.width-1;
     var maxy = room.height-1;
-    var frame = Math.floor(room.animationFrame/2) % 8;
-    if(frame > 4) frame = 8-frame;
+    var arrowFrame = Math.floor(frame/2) % 8;
+    if(arrowFrame > 4) arrowFrame = 8-arrowFrame;
 
     if(room.exits.n)
         ctx.drawImage( Images.arrows,
-                       0 + frame*96, 0,
+                       0 + arrowFrame*96, 0,
                        48, 48,
                        midx * 48 + offset.x*48, 0 + offset.y*48,
                        48, 48 );
 
     if(room.exits.s)
         ctx.drawImage( Images.arrows,
-                       48 + frame*96, 0,
+                       48 + arrowFrame*96, 0,
                        48, 48,
                        midx * 48 + offset.x*48, maxy * 48 + offset.y*48,
                        48, 48 );
 
     if(room.exits.e)
         ctx.drawImage( Images.arrows,
-                       48 + frame*96, 48,
+                       48 + arrowFrame*96, 48,
                        48, 48,
                        maxx * 48 + offset.x*48, midy * 48 + offset.y*48,
                        48, 48 );
 
     if(room.exits.w)
         ctx.drawImage( Images.arrows,
-                       0 + frame*96, 48,
+                       0 + arrowFrame*96, 48,
                        48, 48,
                        0 + offset.x*48, midy * 48 + offset.y*48,
                        48, 48 );
@@ -138,16 +122,11 @@ Display.prototype.drawRoom = function(room, offset, player){
 
     // Draw player
     if(player){
-        var playerFrame = (Math.floor(room.animationFrame / 10)) % 2;
+        var playerFrame = (Math.floor(frame / 10)) % 2;
         ctx.drawImage( Images.creatures,
                        3 * 48, (3 + playerFrame) * 48,
                        48, 48,
                        (player.x +offset.x) * 48, (player.y +offset.y) * 48,
                        48, 48);
-    }
-
-    if(this.buffer){
-        var realctx = this.canvas.getContext("2d");
-        realctx.drawImage(this.buffer, 0, 0);
     }
 };

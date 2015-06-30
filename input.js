@@ -1,6 +1,6 @@
 "use strict";
 
-function Input(canvas, inv_canvas){
+function Input(canvas){
     var that = this;
     canvas.onclick = function(e){
         var x = Math.floor(e.offsetX/48);
@@ -8,12 +8,12 @@ function Input(canvas, inv_canvas){
         that.click(new Point(x, y));
     };
 
-    this.inv_width = inv_canvas.width/48;
-    inv_canvas.onclick = function(e){
-        var x = Math.floor(e.offsetX/48);
-        var y = Math.floor(e.offsetY/48);
-        that.inventoryClick(new Point(x, y));
-    };
+    // this.inv_width = inv_canvas.width/48;
+    // inv_canvas.onclick = function(e){
+    //     var x = Math.floor(e.offsetX/48);
+    //     var y = Math.floor(e.offsetY/48);
+    //     that.inventoryClick(new Point(x, y));
+    // };
 
     KeyboardJS.on('up', function(){
         that.click(that.game.player.add(Point.up));

@@ -74,7 +74,6 @@ function makemap(exits) {
     }
 
     // Various members
-    map.animationFrame = 0;
     map.biome = random(1, 15);
 
     smoothifyWalls(map, hv);

@@ -4,25 +4,32 @@ var G = null;
 var Log = null;
 
 $(document).ready(function(){
-    Log = new LogObj();
-
     loadImages().then(function(){
-        var map_canvas = document.getElementById("map");
-        var inv_canvas = document.getElementById("inventory");
+        var canvas = document.getElementById("map");
         var game = new Game(); G = game;
 
-        var display = new Display(map_canvas, true);
+        Log = new LogObj(canvas, {x: 0, y: 48*9,
+                                  width: 48*13, height: 48*3});
+
+        var display = new Display(canvas, {x: 0, y: 0,
+                                           width: 48*13, height:48*9});
         game.display = display;
         display.game = game;
 
-        var input = new Input(map_canvas, inv_canvas);
+        var input = new Input(canvas);
         game.input = input;
         input.game = game;
 
-        var inventory = new Inventory(inv_canvas, true);
+        var inventory = new Inventory(canvas, {x: 48*13, y: 48*5,
+                                               width: 48*5, height:48*7});
         inventory.game = game;
         game.inventory = inventory;
 
-        game.start();
+        var timer = new Timer(function(frame){
+            game.draw(frame);
+            Log.draw(frame);
+        });
+
+        timer.start();
     });
 });

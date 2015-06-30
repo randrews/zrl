@@ -8,7 +8,8 @@ function loadImages(){
         ["arrows", "img/arrows.png"],
         ["creatures", "img/oryx_16bit_fantasy_creatures_trans.png"],
         ["items", "img/oryx_16bit_fantasy_items_trans.png"],
-        ["parchment", "img/parchment.png"]
+        ["parchment_light", "img/parchment-light.png"],
+        ["parchment_dark", "img/parchment-dark.png"]
     ];
     var loaded = 0;
     var prom = new Promise();
