@@ -52,3 +52,9 @@ function patch9(ctx, image, w, h){
                            xn*48, yn*48, 48, 48 );
         }
 }
+
+function inRect(pt, geometry){
+    return (pt.x >= geometry.x && pt.y >= geometry.y &&
+            pt.x < geometry.x+geometry.width &&
+            pt.y < geometry.y+geometry.height);
+};

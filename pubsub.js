@@ -30,6 +30,6 @@ Promise.prototype.then = function(callback){
 Promise.prototype.finish = function(){
     this.fulfilled = true;
     for(var i=0; i<this.callbacks.length; i++)
-        (this.callbacks[i])();
+        this.callbacks[i].apply(this, arguments);
     return this;
 };

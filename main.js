@@ -11,6 +11,8 @@ $(document).ready(function(){
         Log = new LogObj(canvas, {x: 0, y: 48*9,
                                   width: 48*13, height: 48*3});
 
+        Dialog.canvas = canvas;
+
         var display = new Display(canvas, {x: 0, y: 0,
                                            width: 48*13, height:48*9});
         game.display = display;
@@ -26,9 +28,10 @@ $(document).ready(function(){
         game.inventory = inventory;
 
         var timer = new Timer(function(frame){
-            game.draw(frame);
             Log.draw(frame);
-        });
+            game.draw(frame);
+            if(Dialog.active) Dialog.active.draw(frame);
+        }, 60, 15);
 
         timer.start();
     });
