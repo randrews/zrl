@@ -29,21 +29,65 @@
 
          body { font-family: Munro; font-size: 20px; }
 
+         #mainpanel {
+             position: relative;
+             width:864px;
+             left: 50%;
+             margin-left:-432px;
+         }
+
+         #mapcontainer {
+             position:relative;
+             width:864px;
+             left: 50%;
+             margin-left:-432px;
+         }
+
+         #log {
+             position:absolute;
+             left:0; top:432px;
+             width:864px; height: 144px;
+             background-image:url('img/log.png');
+             padding:10px;
+         }
+
          #log .line {
              position: absolute;
              left: 5px;
              height: 20px;
              width: 100%;
          }
+
+         #dialog {
+             position: absolute;
+             width: 384px; height: 288px;
+             left: 50%;
+             margin-left: -192px;
+             top: 50%;
+             margin-top: -144px;
+             background: url(img/dialog.png);
+         }
+
+         #dialog button {
+             width: 96px; height: 48px;
+             corner-radius: 0;
+             border: none;
+             background: url(img/button.png);
+         }
+
+         #dialog button:active {
+             border: none;
+             background: url(img/button-pressed.png);
+         }
         </style>
     </head>
     <body>
-        <div class="panel panel-default" style="position: relative; width:864px; left: 50%; margin-left:-432px;">
+        <div id="mainpanel" class="panel panel-default">
             <div class="panel-heading">
                 Game
             </div>
             <div class="panel-body">
-                <div style="position:relative; width:864px; left: 50%; margin-left:-432px;">
+                <div id="mapcontainer">
                     <canvas style="background-color:black"
                             height="432"
                             width="624"
@@ -63,7 +107,7 @@
                         </div>
                     </div>
 
-                    <div id="log" style="position:absolute; left:0; top:432px; width:864px; height: 144px; background-image:url('img/log.png');padding:10px;">
+                    <div id="log">
                         <div style="position: relative">
                             <div id="line1" class="line" style="top:0px"></div>
                             <div id="line2" class="line" style="top:20px"></div>
@@ -72,6 +116,11 @@
                             <div id="line5" class="line" style="top:80px"></div>                            
                             <div id="line6" class="line" style="top:100px"></div>                            
                         </div>
+                    </div>
+
+                    <div id="dialog">
+                        Blah
+                        <button id="button1">Foo</button>
                     </div>
                 </div>
             </div>
