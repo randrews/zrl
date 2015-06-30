@@ -3,40 +3,41 @@
 function Input(canvas){
     var that = this;
     canvas.onclick = function(e){
-        var x = Math.floor(e.offsetX/48);
-        var y = Math.floor(e.offsetY/48);
-        that.click(new Point(x, y));
+        var pt = new Point(e.offsetX, e.offsetY);
+        var g = that.game;
+
+        if(that.inRect(pt, g.display.geometry))
+            that.mapClick(that.toTile(pt,
+                                      g.display.geometry));
+        else if(that.inRect(pt, g.inventory.geometry))
+            that.inventoryClick(that.toTile(pt,
+                                            g.inventory.geometry));
+
+        return false;
     };
 
-    // this.inv_width = inv_canvas.width/48;
-    // inv_canvas.onclick = function(e){
-    //     var x = Math.floor(e.offsetX/48);
-    //     var y = Math.floor(e.offsetY/48);
-    //     that.inventoryClick(new Point(x, y));
-    // };
-
     KeyboardJS.on('up', function(){
-        that.click(that.game.player.add(Point.up));
+        that.mapClick(that.game.player.add(Point.up));
         return false;
     });
 
     KeyboardJS.on('down', function(){
-        that.click(that.game.player.add(Point.down));
+        that.mapClick(that.game.player.add(Point.down));
         return false;
     });
 
     KeyboardJS.on('left', function(){
-        that.click(that.game.player.add(Point.left));
+        that.mapClick(that.game.player.add(Point.left));
         return false;
     });
 
     KeyboardJS.on('right', function(){
-        that.click(that.game.player.add(Point.right));
+        that.mapClick(that.game.player.add(Point.right));
         return false;
     });
 }
 
-Input.prototype.click = function(pt){
+Input.prototype.mapClick = function(pt){
     if(!this.game) throw "Game not set";
     if(this.game.animating) return;
 
@@ -60,7 +61,19 @@ Input.prototype.click = function(pt){
 Input.prototype.inventoryClick = function(pt){
     if(!this.game) throw "Game not set";
     if(this.game.animating) return;
-
-    var n = pt.x + this.inv_width*pt.y;
+    var inv_width = this.game.inventory.geometry.width/48;
+    var n = pt.x + inv_width*pt.y;
     this.game.useItem(n);
+};
+
+Input.prototype.inRect = function(pt, geometry){
+    return (pt.x >= geometry.x && pt.y >= geometry.y &&
+            pt.x < geometry.x+geometry.width &&
+            pt.y < geometry.y+geometry.height);
+};
+
+Input.prototype.toTile = function(pt, geometry){
+    var x = Math.floor((pt.x-geometry.x)/48);
+    var y = Math.floor((pt.y-geometry.y)/48);
+    return new Point(x, y);
 };
