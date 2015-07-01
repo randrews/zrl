@@ -1,7 +1,7 @@
 "use strict";
 
 function Dialog(width, height){
-    width = width || 48*7;
+    width = width || 48*3;
     height = height || 48*5;
     var x = Math.floor((Dialog.canvas.width - width)/2);
     var y = Math.floor((Dialog.canvas.height - height)/2);
@@ -21,6 +21,17 @@ Dialog.prototype.paint = function(ctx){
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
 
+    if(this.item){
+        var x = Math.floor(this.geometry.width/2-16);
+        ctx.drawImage( Images.items,
+                       this.item.draw.x*32,
+                       this.item.draw.y*32,
+                       32, 32,
+                       x, 10, 32, 32 );
+        ctx.fillText( this.item.description,
+                      Math.floor(this.geometry.width/2), 56);
+    }
+
     for(var n=0; n<this.buttons.length; n++){
         var btn = this.buttons[n];
         ctx.drawImage(Images.parchment_light,
@@ -32,11 +43,16 @@ Dialog.prototype.paint = function(ctx){
 
 Dialog.open = function(width, height){
     Dialog.active = new Dialog(width, height);
-    return Dialog.active.promise;
+    return Dialog.active;
 };
 
 Dialog.close = function(){
     Dialog.active = null;
+};
+
+Dialog.prototype.then = function(callback){
+    this.promise.then(callback);
+    return this;
 };
 
 Dialog.prototype.click = function(pt){
@@ -51,6 +67,14 @@ Dialog.prototype.click = function(pt){
 Dialog.prototype.addButton = function(label){
     this.buttons.push({label: label});
     this.repack();
+};
+
+Dialog.prototype.setButtons = function(btn_labels){
+    this.buttons = [];
+    for(var n=0; n<btn_labels.length; n++)
+        this.buttons.push({label: btn_labels[n]});
+    this.repack();
+    return this;
 };
 
 Dialog.prototype.repack = function(){
@@ -76,4 +100,9 @@ Dialog.prototype.repack = function(){
             }
         }
     }
+};
+
+Dialog.prototype.setItem = function(item){
+    this.item = item;
+    return this;
 };

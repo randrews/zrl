@@ -27,6 +27,11 @@ $(document).ready(function(){
         inventory.game = game;
         game.inventory = inventory;
 
+        var status = new Status(canvas, {x: 48*13, y: 0,
+                                         width: 48*5, height:48*5});
+        status.game = game;
+        game.status = status;
+
         var timer = new Timer(function(frame){
             Log.draw(frame);
             game.draw(frame);

@@ -96,11 +96,15 @@ Game.prototype.useItem = function(index){
     var item = this.player_inventory[index];
     if(!item) return;
 
-    item.consume();
+    item.consume(this, index);
+};
+
+Game.prototype.removeItem = function(index){
     this.player_inventory.splice(index, 1);
 };
 
 Game.prototype.draw = function(frame){
     this.display.draw(frame);
     this.inventory.draw(this.getInventory(), frame);
+    this.status.draw(frame);
 };
