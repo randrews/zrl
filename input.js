@@ -6,8 +6,9 @@ function Input(canvas){
     canvas.onclick = function(e){
         var pt = new Point(e.offsetX, e.offsetY);
         var g = that.game;
-
-        if(Dialog.active) {
+        if(Target.active) {
+            Target.active.click(pt);
+        } else if(Dialog.active) {
             var geo = Dialog.active.geometry;
 
             if(inRect(pt, geo))

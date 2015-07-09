@@ -22,6 +22,7 @@ var HealthPotion = Object.create(Potion);
 HealthPotion.description = "Health potion";
 HealthPotion.draw = new Point(9, 1);
 HealthPotion.consume = function(game, id){
+    var that = this;
     Dialog.open().
         setButtons(["Drink", "Drop", "Throw"]).
         setItem(this).
@@ -29,8 +30,17 @@ HealthPotion.consume = function(game, id){
             if(verb == 'Drink'){
                 Log.print("You drink the health potion");
                 game.removeItem(id);
-            }else if(verb == 'Drop' || verb == 'Throw')
+            } else if(verb == 'Drop') {
+                Log.print("Drop where?");
+                Target.map(game).where('empty').where('adjacent').
+                    then(function(pt){
+                        game.currentRoom().items.at(pt).push(that);
+                        game.removeItem(id);
+                        Log.print("Dropped");
+                    });
+            } else {
                 Log.print('We gotta get targeting working');
+            }
 
             Dialog.close();
         });
