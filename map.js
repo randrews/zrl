@@ -54,7 +54,7 @@ Map.prototype.each = function(callback){
 };
 
 Map.prototype.valueOf = function(){
-  return "[Map width=" + this.width + " height=" + height + "]";
+  return "[Map width=" + this.width + " height=" + this.height + "]";
 };
 
 Map.prototype.find = function(fn){

@@ -59,6 +59,7 @@ Input.prototype.mapClick = function(pt){
     if(this.game.animating) return;
 
     var room = this.game.currentRoom();
+    if(!room.inside(pt)) return;
 
     var dest = room.at(pt);
     if(dest.type == 'floor') {

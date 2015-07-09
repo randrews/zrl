@@ -3,6 +3,7 @@
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="lib/keyboard.js"></script>
+        <script src="lib/rot.min.js"></script>
 
         <script type="application/javascript" src="point.js"></script>
         <script type="application/javascript" src="map.js"></script>
@@ -22,10 +23,6 @@
         <script type="application/javascript" src="log.js"></script>
         <script type="application/javascript" src="target.js"></script>
         <script type="application/javascript" src="main.js"></script>
-
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
         <style type="text/css">
          @font-face {
@@ -51,17 +48,12 @@
         </style>
     </head>
     <body>
-        <div id="mainpanel" class="panel panel-default">
-            <div class="panel-heading">
-                Game
-            </div>
-            <div class="panel-body">
-                <div id="mapcontainer">
-                    <canvas id="map"
-                            width="864"
-                            height="576">
-                    </canvas>
-                </div>
+        <div id="mainpanel">
+            <div id="mapcontainer">
+                <canvas id="map"
+                        width="864"
+                        height="576">
+                </canvas>
             </div>
         </div>
     </body>

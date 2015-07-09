@@ -10,9 +10,13 @@ Display.prototype.paint = function(ctx, frame){
     if(this.animating)
         this.animationCallback(ctx, frame);
     else {
-        this.drawRoom(ctx, this.game.currentRoom(), frame,
-                      new Point(0,0),
-                      this.game.player);
+        var room = this.game.currentRoom();
+        var player = this.game.player;
+        var fov = this.game.calculateFov(room, player);
+
+        this.drawRoom(ctx, room, frame,
+                      { player: player,
+                        fov: fov });
     }
 };
 
@@ -47,14 +51,29 @@ Display.prototype.animate = function(room1, room2, dir){
 
     this.animating = true;
     this.animationCallback = function(ctx, frame){
-        that.drawRoom(ctx, room1, frame, offset);
-        that.drawRoom(ctx, room2, frame, room2_offset.add(offset), that.game.player);
+        var fov = that.game.calculateFov(room2, that.game.player);
+
+        that.drawRoom(ctx, room1, frame,
+                      { offset: offset,
+                        dark: true });
+        that.drawRoom(ctx, room2, frame,
+                      { offset: room2_offset.add(offset),
+                        player: that.game.player,
+                        fov: fov });
     };
 
     return prom;
 };
 
-Display.prototype.drawRoom = function(ctx, room, frame, offset, player){
+Display.prototype.drawRoom = function(ctx, room, frame, opts){
+    opts = opts || {};
+    var offset = opts.offset || new Point(0,0);
+    var player = opts.player;
+    var fov = opts.fov;
+    var dark = opts.dark;
+
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
+
     room.each(function(pt, cell){
         var col = cell.draw;
         var dest = pt.add(offset);
@@ -67,12 +86,18 @@ Display.prototype.drawRoom = function(ctx, room, frame, offset, player){
                        48, 48,
                        dest.x*48, dest.y*48,
                        48, 48);
+
+        if(dark || fov && !fov.at(pt)) {
+            ctx.fillRect( dest.x*48, dest.y*48, 48, 48 );
+        }
     });
 
     // Draw items
     room.items.each(function(pt, items){
         var dest = pt.add(offset);
         if(!this.inside(dest)) return;
+
+        if(dark || fov && !fov.at(pt)) return;
 
         for(var i=0; i<items.length; i++){
             var tile = items[i].draw;

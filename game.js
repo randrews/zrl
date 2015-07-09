@@ -108,3 +108,21 @@ Game.prototype.draw = function(frame){
     this.inventory.draw(this.getInventory(), frame);
     this.status.draw(frame);
 };
+
+Game.prototype.calculateFov = function(room, player){
+    var fov = new Map(room.width, room.height, false);
+
+    var input = function(x, y){
+        var cell = room.at(new Point(x, y));
+        return cell && cell.type == 'floor';
+    };
+
+    new ROT.FOV.PreciseShadowcasting(input).compute(
+        player.x, player.y, room.width,
+        function(x, y, r, visibility){
+            fov.at(new Point(x,y), true);
+        }
+    );
+
+    return fov;
+};
