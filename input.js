@@ -58,19 +58,19 @@ Input.prototype.mapClick = function(pt){
     if(!this.game) throw "Game not set";
     if(this.game.animating) return;
 
-    var room = this.game.currentRoom();
-    if(!room.inside(pt)) return;
-
-    var dest = room.at(pt);
-    if(dest.type == 'floor') {
+    if(this.game.canMove(pt)) {
         if(pt.adjacent(this.game.player, true)){
             this.game.movePlayer(pt);
         } else {
-            var isFloor = function(pt){
-                return room.at(pt).type == 'floor';
+            var room = this.game.currentRoom();
+            var game = this.game;
+
+            var clear = function(pt){
+                return ( room.at(pt).type == 'floor' &&
+                         !game.enemyAt(pt) );
             };
 
-            var path = room.path(this.game.player, pt, isFloor, true);
+            var path = room.path(this.game.player, pt, clear, true);
             if(path) this.game.movePath(path);
         }
     }

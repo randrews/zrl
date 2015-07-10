@@ -151,7 +151,26 @@ Display.prototype.drawRoom = function(ctx, room, frame, opts){
         ctx.drawImage( Images.creatures,
                        3 * 48, (3 + playerFrame) * 48,
                        48, 48,
-                       (player.x +offset.x) * 48, (player.y +offset.y) * 48,
+                       (player.x + offset.x) * 48, (player.y + offset.y) * 48,
                        48, 48);
+    }
+
+    // Draw enemies
+    for(var i=0; i<room.enemies.length; i++){
+        var pt = room.enemies[i][0];
+        var enemy = room.enemies[i][1];
+
+        var dest = pt.add(offset);
+        if(!room.inside(dest)) return;
+        if(dark || fov && !fov.at(pt)) return;
+
+        var enemyFrame = (Math.floor(frame / (10*enemy.speed))) % 2;
+        var tile = enemy.draw;
+        
+        ctx.drawImage( Images.creatures,
+                       tile.x * 48, (tile.y + enemyFrame) * 48,
+                       48, 48,
+                       dest.x*48, dest.y*48,
+                       48, 48 );
     }
 };

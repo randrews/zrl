@@ -30,12 +30,14 @@ HealthPotion.consume = function(game, id){
             if(verb == 'Drink'){
                 Log.print("You drink the health potion");
                 game.removeItem(id);
+                game.tick();
             } else if(verb == 'Drop') {
                 Log.print("Drop where?");
                 Target.map(game).where('empty').where('adjacent').
                     then(function(pt){
                         game.currentRoom().items.at(pt).push(that);
                         game.removeItem(id);
+                        game.tick();
                         Log.print("Dropped");
                     });
             } else {

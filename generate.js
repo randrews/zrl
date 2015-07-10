@@ -80,6 +80,7 @@ function makemap(exits) {
     insertDoors(map, exits);
     randomizeFloors(map);
     addItems(map);
+    addEnemies(map);
 
     return map;
 }
@@ -182,6 +183,18 @@ function addItems(map){
     map.items = new Map(map.width, map.height);
     map.items.each(function(pt){ this.at(pt, []); });
     map.items.at(loc).push( Object.create(HealthPotion) );
+}
+
+function addEnemies(map){
+    var loc = map.random(function(_, c){
+        var items = map.items.at(c);
+        return ( c.type == 'floor' &&
+                 !c.door &&
+                 (!items || items.length == 0) );
+    });
+
+    map.enemies = [];
+    map.enemies.push([loc, new Rat()]);
 }
 
 function printmap(map){
