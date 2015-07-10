@@ -27,11 +27,19 @@ Game.prototype.getInventory = function(){
 };
 
 Game.prototype.movePlayer = function(pt){
-    this.player = pt;
     var dest = this.currentRoom().at(pt);
-    if(dest.door)
+    var enemy = this.enemyAt(pt);
+
+    if(enemy) {
+        enemy.attack(this);
+        this.tick();
+        return true;
+    } else if(dest.door) {
+        this.player = pt;
         this.moveRoom(dest.door);
-    else {
+    } else {
+        this.player = pt;
+
         var items = this.currentRoom().items.at(pt);
         if(items.length > 0) {
             var item = items[0];
@@ -52,9 +60,9 @@ Game.prototype.movePath = function(path){
     this.animating = true;
 
     var timer = setInterval( function(){
-        that.movePlayer(path[current_idx]);
+        var bumped = that.movePlayer(path[current_idx]);
 
-        if(++current_idx == path.length){
+        if(++current_idx == path.length || bumped){
             clearInterval(timer);
             that.animating = false;
             prom.finish();
@@ -176,8 +184,6 @@ Game.prototype.canMove = function(pt){
 
     var dest = room.at(pt);
     if(dest.type != 'floor') return false;
-
-    if(this.enemyAt(pt)) return false;
 
     return true;
 };

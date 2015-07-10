@@ -66,8 +66,7 @@ Input.prototype.mapClick = function(pt){
             var game = this.game;
 
             var clear = function(pt){
-                return ( room.at(pt).type == 'floor' &&
-                         !game.enemyAt(pt) );
+                return room.at(pt).type == 'floor';
             };
 
             var path = room.path(this.game.player, pt, clear, true);

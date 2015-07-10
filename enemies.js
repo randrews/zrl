@@ -18,7 +18,11 @@ Enemy.prototype.tick = function(game, pt){
     if(pt.adjacent(game.player, true))
         game.attackPlayer(this);
     else
-        game.moveTowardPlayer(this, pt);
+        game.moveTowardPlayer(this);
+};
+
+Enemy.prototype.attack = function(game){
+    Log.print("Attacking the " + this.name);
 };
 
 ////////////////////////////////////////
