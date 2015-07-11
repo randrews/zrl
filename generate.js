@@ -176,13 +176,17 @@ function floorForBiome(biome){
 }
 
 function addItems(map){
+    var obj = (random(2)==1 ?
+               Object.create(HealthPotion) :
+               Object.create(Scroll));
+
     var loc = map.random(function(_, c){
         return c.type == 'floor' && !c.door;
     });
 
     map.items = new Map(map.width, map.height);
     map.items.each(function(pt){ this.at(pt, []); });
-    map.items.at(loc).push( Object.create(HealthPotion) );
+    map.items.at(loc).push(obj);
 }
 
 function addEnemies(map){

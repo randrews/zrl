@@ -101,5 +101,14 @@ Target.filters = {
     empty: function(game, pt){
         return Target.filters.floor(game, pt) &&
             Target.filters.noitem(game, pt);
+    },
+
+    visible: function(game, pt){
+        var vis = game.calculateFov(game.currentRoom(), game.player);
+        return vis.at(pt);
+    },
+
+    enemy: function(game, pt){
+        return game.enemyAt(pt);
     }
 };

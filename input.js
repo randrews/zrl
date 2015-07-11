@@ -52,6 +52,12 @@ function Input(canvas){
             that.mapClick(that.game.player.add(Point.right));
         return false;
     });
+
+    KeyboardJS.on('esc', function(){
+        if(Dialog.active) Dialog.close();
+        if(Target.active){ Target.cancel(); Log.print("Canceled"); }
+        return false;
+    });
 }
 
 Input.prototype.mapClick = function(pt){

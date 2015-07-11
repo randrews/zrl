@@ -104,9 +104,9 @@ Game.prototype.moveRoom = function(dir){
 
 Game.prototype.useItem = function(index){
     var item = this.player_inventory[index];
-    if(!item) return;
+    if(!item || !item.usable) return;
 
-    item.consume(this, index);
+    item.use(this, index);
 };
 
 Game.prototype.removeItem = function(index){
