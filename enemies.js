@@ -14,15 +14,27 @@ Enemy.prototype.init = function(){
     this.health = this.maxHealth;
 };
 
+// Return true if a multi-step move should be interrupted by anything
+// we're doing (like we attacked the player)
 Enemy.prototype.tick = function(game, pt){
-    if(pt.adjacent(game.player, true))
+    if(pt.adjacent(game.player, true)) {
         game.attackPlayer(this);
-    else
+        return true;
+    } else {
         game.moveTowardPlayer(this);
+        return false;
+    }
 };
 
-Enemy.prototype.attack = function(game){
-    Log.print("Attacking the " + this.name);
+Enemy.prototype.kill = function(game){};
+
+Enemy.prototype.hurt = function(game, dmg){
+    this.health -= dmg;
+    if(this.health <= 0) {
+        Log.print("You killed the " + this.name);
+        this.kill();
+        game.removeEnemy(this);
+    }
 };
 
 ////////////////////////////////////////

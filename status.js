@@ -8,9 +8,12 @@ Status.prototype = new Drawable();
 
 Status.prototype.paint = function(ctx){
     patch9(ctx, Images.parchment_gray, 48*5, 48*5);
-    this.paintBar(ctx, 16, 40, 0.31);
-    this.paintBar(ctx, 40, 60, 0.31);
-    this.paintBar(ctx, 64, 20, 0.31);
+    var hp = this.game.stats.health / this.game.stats.maxHealth;
+    if(hp > 1) hp = 1; if(hp < 0) hp = 0;
+
+    this.paintBar(ctx, 16, 40, hp);
+    this.paintBar(ctx, 40, 60, 1);
+    this.paintBar(ctx, 64, 20, 0);
 };
 
 Status.prototype.paintBar = function(ctx, y, bary, pct){

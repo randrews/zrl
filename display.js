@@ -172,5 +172,12 @@ Display.prototype.drawRoom = function(ctx, room, frame, opts){
                        48, 48,
                        dest.x*48, dest.y*48,
                        48, 48 );
+
+        if(enemy.health < enemy.maxHealth) {
+            var bar = Math.round(enemy.health / enemy.maxHealth * 48);
+            ctx.fillStyle = "#f00";
+            ctx.fillRect( dest.x*48, dest.y*48+3,
+                          bar, 3 );
+        }
     }
 };

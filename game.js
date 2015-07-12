@@ -16,6 +16,12 @@ function Game(){
 
     this.animating = false;
     this.animationFrame = 0;
+
+    this.stats = {
+        maxHealth: 20,
+        health: 20,
+        level: 1
+    };
 }
 
 Game.prototype.currentRoom = function(){
@@ -31,12 +37,13 @@ Game.prototype.movePlayer = function(pt){
     var enemy = this.enemyAt(pt);
 
     if(enemy) {
-        enemy.attack(this);
+        this.attackEnemy(enemy);
         this.tick();
         return true;
     } else if(dest.door) {
         this.player = pt;
         this.moveRoom(dest.door);
+        return true;
     } else {
         this.player = pt;
 
@@ -49,7 +56,7 @@ Game.prototype.movePlayer = function(pt){
             }
         }
 
-        this.tick();
+        return this.tick();
     }
 };
 
@@ -60,9 +67,9 @@ Game.prototype.movePath = function(path){
     this.animating = true;
 
     var timer = setInterval( function(){
-        var bumped = that.movePlayer(path[current_idx]);
+        var interrupted = that.movePlayer(path[current_idx]);
 
-        if(++current_idx == path.length || bumped){
+        if(++current_idx == path.length || interrupted){
             clearInterval(timer);
             that.animating = false;
             prom.finish();
@@ -141,12 +148,13 @@ Game.prototype.attackPlayer = function(enemy){
     var attack_desc;
     if(Math.random() < enemy.accuracy){
         var dmg = random(enemy.dmg[0], enemy.dmg[1]);
-        attack_desc = "for " + dmg + " damage";
+        this.stats.health -= dmg;
+        attack_desc = "hits for " + dmg + " damage";
     } else {
-        attack_desc = "and misses";
+        attack_desc = "misses";
     }
 
-    Log.print("The " + enemy.name + " attacks " + attack_desc);
+    Log.print("The " + enemy.name + " " + attack_desc);
 };
 
 Game.prototype.moveTowardPlayer = function(enemy){
@@ -164,12 +172,15 @@ Game.prototype.moveTowardPlayer = function(enemy){
 };
 
 Game.prototype.tick = function(){
+    var interrupt = false;
     var room = this.currentRoom();
     for(var i=0; i<room.enemies.length; i++){
         var pt = room.enemies[i][0];
         var enemy = room.enemies[i][1];
-        enemy.tick(this, pt);
+        interrupt = enemy.tick(this, pt) || interrupt;
     }
+
+    return interrupt;
 };
 
 Game.prototype.enemyAt = function(pt){
@@ -186,4 +197,22 @@ Game.prototype.canMove = function(pt){
     if(dest.type != 'floor') return false;
 
     return true;
+};
+
+Game.prototype.attackEnemy = function(enemy){
+    var hit = (random(2) == 1);
+    var dmg = random(2);
+
+    if(hit) {
+        Log.print("You hit the " + enemy.name + " for " + dmg + " damage");
+        enemy.hurt(this, dmg);
+    } else {
+        Log.print("You miss the " + enemy.name);
+    }
+};
+
+Game.prototype.removeEnemy = function(enemy){
+    var enemies = this.currentRoom().enemies;
+    var i = -1; while(enemies[++i][1] != enemy);
+    enemies.splice(i, 1);
 };

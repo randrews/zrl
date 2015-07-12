@@ -54,6 +54,11 @@ HealthPotion.use = function(game, id){
             if(verb == 'Drink'){
                 Log.print("You drink the health potion");
                 game.removeItem(id);
+                var gains = Math.round(game.stats.maxHealth / 4);
+                if(gains > 10) gains = 10;
+                game.stats.health += gains;
+                if(game.stats.health > game.stats.maxHealth)
+                    game.stats.health = game.stats.maxHealth;
                 game.tick();
             } else if(verb == 'Drop') {
                 that.drop(dame, id);
@@ -73,8 +78,9 @@ HealthPotion.grab = function(game){
 ////////////////////////////////////////
 
 var Scroll = Object.create(Item);
-Scroll.usable  = true;
+Scroll.description = "'LOB NA'";
 Scroll.draw = new Point(1,0);
+Scroll.usable  = true;
 
 Scroll.use = function(game, id){
     var that = this;
@@ -87,7 +93,9 @@ Scroll.use = function(game, id){
                 Log.print("Choose an enemy to target");
                 Target.map(game).where('enemy').then(function(pt){
                     var enemy = game.enemyAt(pt);
-                    Log.print("A fireball hits the " + enemy.name);
+                    var dmg = random(5, 10);
+                    Log.print("A fireball burns the " + enemy.name + " for " + dmg + " damage");
+                    enemy.hurt(game, dmg);
                     game.removeItem(id);
                     game.tick();
                 });
