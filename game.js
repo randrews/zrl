@@ -22,6 +22,12 @@ function Game(){
         health: 20,
         level: 1
     };
+
+    this.equipment = {};
+
+    var wpn = Object.create(Dagger);
+    this.equip(wpn);
+    this.player_inventory.push(wpn);
 }
 
 Game.prototype.currentRoom = function(){
@@ -200,12 +206,20 @@ Game.prototype.canMove = function(pt){
 };
 
 Game.prototype.attackEnemy = function(enemy){
-    var hit = (random(2) == 1);
-    var dmg = random(2);
+    var accuracy = 0.5;
+    var dmg = [1, 2];
+
+    if(this.equipment.weapon){
+        accuracy = this.equipment.weapon.accuracy;
+        dmg = this.equipment.weapon.dmg;
+    }
+
+    var hit = Math.random() < accuracy;
+    var dp = random(dmg[0], dmg[1]);
 
     if(hit) {
-        Log.print("You hit the " + enemy.name + " for " + dmg + " damage");
-        enemy.hurt(this, dmg);
+        Log.print("You hit the " + enemy.name + " for " + dp + " damage");
+        enemy.hurt(this, dp);
     } else {
         Log.print("You miss the " + enemy.name);
     }
@@ -215,4 +229,20 @@ Game.prototype.removeEnemy = function(enemy){
     var enemies = this.currentRoom().enemies;
     var i = -1; while(enemies[++i][1] != enemy);
     enemies.splice(i, 1);
+};
+
+Game.prototype.equip = function(item){
+    if(!item.equippable) return;
+    if(this.equipment[item.slot]){
+        var old = this.equipment[item.slot];
+        old.equipped = false;
+    }
+    item.equipped = true;
+    this.equipment[item.slot] = item;
+};
+
+Game.prototype.unequip = function(item){
+    if(!item.equippable || !item.equipped) return;
+    this.equipment[item.slot] = null;
+    item.equipped = false;
 };

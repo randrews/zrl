@@ -4,7 +4,7 @@ var Item = {
     solid: false,
     grabbable: true,
     equippable: false,
-    usable: false,
+    usable: true,
     tickable: false,
 
     description: "Nothing important",
@@ -40,7 +40,6 @@ Item.throwItem = function(game, id){
 ////////////////////////////////////////
 
 var Potion = Object.create(Item);
-Potion.usable  = true;
 
 var HealthPotion = Object.create(Potion);
 HealthPotion.description = "Health potion";
@@ -111,3 +110,38 @@ Scroll.grab = function(game){
     Log.print("You found a scroll: 'LOB NA'");
     return true;
 };
+
+////////////////////////////////////////
+
+var Weapon = Object.create(Item);
+Weapon.equippable = true;
+Weapon.slot = 'weapon';
+
+Weapon.use = function(game, id){
+    var that = this;
+    var verbs = ( this.equipped ?
+                  ["Unequip", "Drop"] :
+                  ["Equip", "Drop"] );
+
+    Dialog.open().
+        setItem(this).
+        setButtons(verbs).
+        then(function(verb){
+            if(verb == 'Drop'){
+                if(that.equipped) game.unequip(that);
+                that.drop(game, id);
+            } else if(verb == 'Equip') {
+                game.equip(that);
+            } else if(verb == 'Unequip') {
+                game.unequip(that);
+            }
+
+            Dialog.close();
+        });
+};
+
+var Dagger = Object.create(Weapon);
+Dagger.description = "Iron dagger";
+Dagger.draw = new Point(1, 10);
+Dagger.dmg = [3, 5];
+Dagger.accuracy = 0.5;

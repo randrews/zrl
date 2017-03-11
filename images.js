@@ -9,6 +9,7 @@ function loadImages(){
         ["creatures", "img/oryx_16bit_fantasy_creatures_trans.png"],
         ["items", "img/oryx_16bit_fantasy_items_trans.png"],
         ["parchment_light", "img/parchment-light.png"],
+        ["parchment", "img/parchment.png"],
         ["parchment_gray", "img/parchment-gray.png"],
         ["parchment_dark", "img/parchment-dark.png"],
         ["bars", "img/bars.png"]

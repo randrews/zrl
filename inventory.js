@@ -16,10 +16,19 @@ Inventory.prototype.paint = function(ctx, items, frame){
         var tile = items[n].draw;
         var x = n % width;
         var y = Math.floor(n / width);
+
+        if(items[n].equipped)
+            ctx.drawImage( Images.parchment,
+                           144, 32,
+                           32, 32,
+                           x*48+8, y*48+8,
+                           32, 32 );
+
         ctx.drawImage( Images.items,
                        tile.x*32, tile.y*32,
                        32, 32,
                        x*48+8, y*48+8,
-                       32, 32 )
+                       32, 32 );
+
     }
 };
